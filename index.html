@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Template • TodoMVC</title>
+		<link rel="stylesheet" href="node_modules/todomvc-common/base.css">
+		<link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
+		<!-- CSS overrides - remove if you don't need it -->
+		<link rel="stylesheet" href="css/app.css">
+	</head>
+	<body>
+		<section class="todoapp" id="todoapp">
+			<header class="header">
+				<h1>笔记Demo</h1>
+				<!-- 给输入框添加回车键监听事件，绑定到addItems函数来处理 -->
+				<input @keyup.enter="addItems"
+				class="new-todo" placeholder="有哪些工作在计划中?来，写下来" v-app-focus>
+			</header>
+			<!-- This section should be hidden by default and shown when there are todos -->
+			<!-- 使用template标签将section和footer包裹起来，
+				当数组长度为零，即没有需要显示的数据时在页面隐藏这两个区域
+				template和v-if搭配使用，div和v-show搭配也可以实现这个效果
+			-->
+			<template v-if="items.length">
+			<section class="main">
+				<input v-model="toggleAll" id="toggle-all" class="toggle-all" type="checkbox">
+				<label for="toggle-all">Mark all as complete</label>
+				<ul class="todo-list">
+					<!-- These are here just to show the structure of the list items -->
+					<!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
+													<!-- 样式绑定，动态的获取属性的值，切换样式两种的状态 -->
+					<li v-for="(item,index) in filterItems" :class="{completed: item.completed,editing: item === curentItem}" >
+						<div class="view">
+							<input class="toggle" type="checkbox"  v-model="item.completed">
+							<label @dblclick="toEdit(item)">{{item.content}}</label>
+							<button class="destroy" :value="item.id" @click="removeItem(index)"></button>
+						</div>
+						<input 	
+							v-todo-focus="item === curentItem"
+							@blur="finishEdit(item,index,$event)"
+							@keyup.enter="finishEdit(item,index,$event)" 
+							@keyup.esc="cancelEdit" class="edit" :value="item.content">
+					</li>
+				</ul>
+			</section>
+			<!-- This footer should hidden by default and shown when there are todos -->
+			<footer class="footer">
+				<!-- This should be `0 items left` by default -->
+																		<!-- 三元运算符，当剩余数为1时，不显示s -->
+				<span class="todo-count">剩余<strong>{{remaining}}</strong> 项未完成</span>
+				<!-- Remove this if you don't implement routing -->
+				<ul class="filters">
+					<li>
+						<a :class="{selected:filterStatus==='all'}" href="#/">查看所有</a>
+					</li>
+					<li>
+						<a :class="{selected:filterStatus==='active'}" href="#/active">未完成项</a>
+					</li>
+					<li>
+						<a :class="{selected:filterStatus==='completed'}" href="#/completed">已完成项</a>
+					</li>
+				</ul>
+				<!-- Hidden if no completed items are left ↓ -->
+				<!-- 当数组中元素的数量大于剩余未完成数时显示此按钮---当存在已完成任务时显示此按钮 -->
+				<button v-show="items.length > remaining" 
+				class="clear-completed" @click="removeCompleted">清除已完成的任务</button>
+			</footer>
+			</template>
+		</section>
+		<footer class="info">
+			<p>双击笔记进行编辑</p>
+			<!-- Remove the below line ↓ -->
+			<p> <a href="http://sindresorhus.com">Sindre Sorhus</a>提供的模板</p>
+			<!-- Change this out with your name and url ↓ -->
+			<p>Created by littleCrazy</p>
+			<p><a href="http://todomvc.com">TodoMVC</a>经典案例</p>
+			<p><a href="http://todomvc.com">Vuejs</a>框架搭建</p>
+		</footer>
+		<!-- Scripts here. Don't remove ↓ -->
+		<script src="./node_modules/vue/dist/vue.js"></script>
+		<script src="node_modules/todomvc-common/base.js"></script>
+		<script src="js/app.js"></script><!-- 引用app.js文件，该文件中包括全部的vue.js的逻辑代码 -->
+	</body>
+</html>
